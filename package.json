@@ -1,0 +1,28 @@
+{
+  "name": "@neumatter/enum",
+  "version": "1.0.0",
+  "description": "A module for building Enums.",
+  "type": "module",
+  "author": "Cal Young",
+  "repository": {
+    "url": "https://github.com/Clyng57/enum"
+  },
+  "keywords": [
+    "enum",
+    "enums",
+    "string",
+    "number",
+    "nodejs",
+    "javascript",
+    "module",
+    "node",
+    "es6"
+  ],
+  "main": "./index.js",
+  "standard": {
+    "engine": "standard",
+    "ignore": [
+      "/types"
+    ]
+  }
+}
