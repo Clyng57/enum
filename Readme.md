@@ -44,8 +44,8 @@ Color.Blue.is('Blue') // returns true
 Color.Blue.is(0) // returns true
 Color.Blue.is(Color.Blue) // returns true
 
-Color.Blue.get('Blue') // returns { key: 'Blue', value: 0 }
-Color.Blue.get(0) // returns { key: 'Blue', value: 0 }
+Color.get('Blue') // returns { key: 'Blue', value: 0 }
+Color.get(0) // returns { key: 'Blue', value: 0 }
 
 Color.getKey('Blue') // returns 'Blue'
 Color.getKey(0) // returns 'Blue'
