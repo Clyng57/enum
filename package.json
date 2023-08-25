@@ -19,6 +19,7 @@
     "es6"
   ],
   "main": "./index.js",
+  "types": "./types",
   "standard": {
     "engine": "standard",
     "ignore": [
