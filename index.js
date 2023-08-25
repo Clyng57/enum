@@ -1,54 +1,4 @@
 
-export class NullObject {
-  /**
-   *
-   * @template {{}} Type
-   * @param {Type} obj
-   * @returns {NullObject & Type}
-   */
-  static create (obj) {
-    const nullObject = new NullObject()
-    return Object.assign(nullObject, obj)
-  }
-
-  /**
-   *
-   * @template {NullObject} N
-   * @template {{}} T
-   * @param {N} nullObject
-   * @param {T} obj
-   * @returns {N & T}
-   */
-  static assign (nullObject, obj) {
-    return Object.assign(nullObject, obj)
-  }
-
-  constructor () {
-    Object.setPrototypeOf(this, null)
-  }
-}
-
-export class FrozenObject {
-  /**
-   *
-   * @template {{}} Type
-   * @param {Type} obj
-   * @returns {Readonly<FrozenObject & Type>}
-   */
-  static create (obj) {
-    return new FrozenObject(obj)
-  }
-
-  isFrozenObject (obj) {
-    return obj instanceof FrozenObject
-  }
-
-  constructor (obj) {
-    Object.assign(this, obj)
-    Object.freeze(this)
-  }
-}
-
 export default class Enum {
   /**
    *
@@ -105,7 +55,7 @@ export default class Enum {
       }
     }
 
-    return undefined
+    throw new SyntaxError(`${input} does not exist in ${this.name}`)
   }
 
   static getKey (input) {
@@ -120,7 +70,7 @@ export default class Enum {
       }
     }
 
-    return undefined
+    throw new SyntaxError(`${input} does not exist in ${this.name}`)
   }
 
   static getValue (input) {
@@ -135,7 +85,7 @@ export default class Enum {
       }
     }
 
-    return undefined
+    throw new SyntaxError(`${input} does not exist in ${this.name}`)
   }
 
   static toJSON () {
@@ -194,26 +144,5 @@ export default class Enum {
 
   [Symbol.for('nodejs.util.inspect.custom')] () {
     return this.toKeyString() + ' (' + this.value + ')'
-  }
-}
-
-/**
- *
- * @template T
- */
-export class NullArray extends Array {
-  /**
-   *
-   * @param {object | Array<T>} array
-   * @returns {{ [P: string]: T, length: number }}
-   */
-  create (array) {
-    const nullArray = new NullArray(array)
-    return nullArray
-  }
-
-  constructor (array) {
-    super(array)
-    Object.setPrototypeOf(this, null)
   }
 }
