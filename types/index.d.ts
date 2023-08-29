@@ -5,41 +5,45 @@ declare class RevivedEnum extends Enum {}
 
 type EnumJSON<T> = Omit<T, 'keys'>
 
-export default class Enum {
-  /**
-   *
-   * @template {object} T
-   * @param {T} obj
-   * @returns {typeof RevivedEnum & T}
-   */
-  static from<T> (obj: T): typeof RevivedEnum & T
+export default class Enum<T extends string | number | symbol> {
+  static from<T> (obj: T): typeof RevivedEnum & { [P in keyof T]: RevivedEnum<T[P]> }
+  static initialize<T> (obj: T): typeof this & { [P in keyof T]: Enum<T[P]> }
 
-  static build (): typeof Enum
+  static build (): typeof Enum<T>
 
-  static get (input: Enum['key'] | Enum['value']): Enum
+  static get (input: Enum<T>['key'] | Enum<T>['value']): Enum<T>
 
-  static getKey (input: Enum['key'] | Enum['value']): Enum['key']
+  static getKey (input: Enum<T>['key'] | Enum<T>['value']): Enum<T>['key']
 
-  static getValue (input: Enum['key'] | Enum['value']): Enum['value']
+  static getValue (input: Enum<T>['key'] | Enum<T>['value']): Enum<T>['value']
 
-  static toJSON (): EnumJSON<Enum>
+  static has (input: Enum<T>['key'] | Enum<T>['value']): boolean
+
+  static values (): IterableIterator<Enum<T>['value']>
+
+  static entries (): IterableIterator<Enum<T>>
+
+  static [Symbol.iterator] (): IterableIterator<Enum<T>>
+
+  static toJSON (): EnumJSON<Enum<T>>
 
   static inspect (): string
 
   key: string
-  value: string | number
+  value: T
+  ordinal: number
 
   /**
    *
-   * @param {string | number} value
+   * @param {T} value
    */
-  constructor (value?: string | number | undefined)
+  constructor (value?: T | undefined)
 
-  is (input: Enum['key'] | Enum['value'] | Enum): boolean
+  is (input: Enum<T>['key'] | Enum<T>['value'] | Enum<T>): boolean
 
-  toKeyString (): `${Enum['constructor']['name']}.${Enum['key']}`
+  toKeyString (): `${Enum<T>['constructor']['name']}.${Enum<T>['key']}`
 
-  toString (): `${Enum['value']}`
+  toString (): `${Enum<T>['value']}`
 
-  toJSON (): Enum['value']
+  toJSON (): Enum<T>['value']
 }
