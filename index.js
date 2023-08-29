@@ -1,15 +1,8 @@
 
 export default class Enum {
-  /**
-   *
-   * @template {object} T
-   * @param {T} obj
-   * @returns {typeof RevivedEnum & T}
-   */
   static from (obj) {
+    class RevivedEnum extends Enum {}
     const keys = Object.keys(obj)
-    // this.keys = []
-    const RevivedEnum = class extends Enum {}
 
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index]
@@ -20,12 +13,31 @@ export default class Enum {
     return RevivedEnum
   }
 
+  /**
+   *
+   * @template {object} T
+   * @param {T} obj
+   * @returns {typeof this & {[P in keyof T]: Enum<T[P]>} }
+   */
+  static initialize (obj) {
+    const keys = Object.keys(obj)
+
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index]
+      this[key] = new this(obj[key])
+    }
+
+    this.build()
+    return this
+  }
+
   static build () {
     const keys = Object.keys(this)
     this.keys = []
 
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index]
+
       if (this[key] instanceof this) {
         if (this[key].value === undefined) {
           this[key].value = index
@@ -33,8 +45,11 @@ export default class Enum {
         if (this[key].key === undefined) {
           this[key].key = key
         }
+        if (this[key].ordinal === undefined) {
+          this[key].ordinal = index
+        }
 
-        this.keys.push(this[key].key)
+        this.keys[index] = this[key].key
         Object.freeze(this[key])
       }
     }
@@ -88,6 +103,73 @@ export default class Enum {
     throw new SyntaxError(`${input} does not exist in ${this.name}`)
   }
 
+  static has (input) {
+    if (this[input] !== undefined) {
+      return true
+    }
+
+    for (let index = 0; index < this.keys.length; index++) {
+      const item = this[this.keys[index]]
+      if (item.value === input) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  static values () {
+    const self = this
+    let index = -1
+
+    return {
+      next: () => {
+        if (++index >= self.keys.length) {
+          return {
+            value: undefined,
+            done: true
+          }
+        }
+
+        return {
+          value: self[self.keys[index]].value,
+          done: false
+        }
+      },
+      [Symbol.iterator] () {
+        return this
+      }
+    }
+  }
+
+  static entries () {
+    return this[Symbol.iterator]()
+  }
+
+  static [Symbol.iterator] () {
+    const self = this
+    let index = -1
+
+    return {
+      next: () => {
+        if (++index >= self.keys.length) {
+          return {
+            value: undefined,
+            done: true
+          }
+        }
+
+        return {
+          value: self[self.keys[index]],
+          done: false
+        }
+      },
+      [Symbol.iterator] () {
+        return this
+      }
+    }
+  }
+
   static toJSON () {
     const response = {}
 
@@ -108,6 +190,7 @@ export default class Enum {
 
   key
   value
+  ordinal
 
   /**
    *
